@@ -1,0 +1,350 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class OsceAndSoe extends StatefulWidget {
+  final type, topic;
+
+  OsceAndSoe(this.type, this.topic);
+
+  @override
+  _OsceAndSoeState createState() => _OsceAndSoeState();
+}
+
+class _OsceAndSoeState extends State<OsceAndSoe> {
+  SwiperController _controller = SwiperController();
+  StreamSubscription _subscription;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _subscription.cancel();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getQuestion();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height - 25,
+                width: MediaQuery.of(context).size.width,
+                child: Swiper(
+                  controller: _controller,
+                  physics: NeverScrollableScrollPhysics(),
+                  loop: false,
+                  itemCount: _questions.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return questionList(context, index);
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<dynamic> _questions = [];
+  bool answerReveal = false;
+  Widget questionList(BuildContext context, int index) {
+    var qNo = index + 1;
+
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: IconButton(
+                  onPressed: () {
+                    index++;
+                  },
+                  icon: Icon(Icons.arrow_back_ios),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: Center(
+                    child: Text(
+                  index == 0 || index == 1 ? "" : "${qNo - 2}",
+                  style: TextStyle(fontSize: 18),
+                )),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: Center(
+                    child: Text(
+                  index == 0 ? "" : "${qNo - 1}",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                )),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: Center(
+                    child: Text(
+                  qNo.toString(),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                )),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: Center(
+                    child: Text(
+                  qNo == _questions.length ? "" : "${qNo + 1}",
+                  style: TextStyle(fontSize: 18),
+                )),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: Center(
+                    child: Text(
+                  qNo == _questions.length || qNo + 1 == _questions.length
+                      ? ""
+                      : "${qNo + 2}",
+                  style: TextStyle(fontSize: 18),
+                )),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 7,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.grey),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.arrow_forward_ios),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    _questions[index]['question'],
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 200,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black54),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter your answer here",
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: RaisedButton(
+                color: CustomTheme.primaryColor,
+                onPressed: () {
+                  answerReveal = true;
+                  setState(() {});
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Reveal Answer",
+                          style: GoogleFonts.poppins(color: Colors.white),
+                        )),
+                    Align(
+                        alignment: Alignment.bottomRight,
+                        child: Icon(
+                          Icons.arrow_drop_down_circle_outlined,
+                          color: Colors.white,
+                        ))
+                  ],
+                ),
+              ),
+            ),
+          ),
+          answerReveal
+              ? Expanded(
+                  child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black54)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                          _questions[index]['answer'].replaceAll('-', '\n')),
+                    ),
+                  ),
+                ))
+              : Expanded(child: Container())
+        ],
+      ),
+    );
+  }
+
+  void getQuestion() async {
+    if (widget.topic == "Pharmacology & Statistics" && widget.type == 'osce') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+    if (widget.topic == "Physiology & Anatomy" && widget.type == 'osce') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+    if (widget.topic == "Physics & Equipment" && widget.type == 'osce') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+    if (widget.topic == "All" && widget.type == 'osce') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+
+    //soe
+
+    if (widget.topic == "Pharmacology & Statistics" && widget.type == 'soe') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+    if (widget.topic == "Physiology & Anatomy" && widget.type == 'soe') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+    if (widget.topic == "Physics & Equipment" && widget.type == 'soe') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+    if (widget.topic == "All" && widget.type == 'soe') {
+      _subscription = Firestore.instance
+          .collection("osce")
+          .orderBy("qno")
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        _questions.clear();
+        snapshot.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {});
+        });
+      });
+    }
+  }
+}

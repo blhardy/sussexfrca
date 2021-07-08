@@ -1,0 +1,105 @@
+import 'package:easyfrca/res.dart';
+import 'package:easyfrca/screens/choosetopic.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class Settings extends StatefulWidget {
+  @override
+  _SettingsState createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                Res.background,
+                fit: BoxFit.cover,
+                color: Colors.black.withOpacity(0.8),
+                colorBlendMode: BlendMode.darken,
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height - 150,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 150,
+                    ),
+                    Divider(
+                      color: Colors.black,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Purchase History'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.black,
+                      height: 1,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 60,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Question History'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.black,
+                      height: 1,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 60,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Clear History'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,247 @@
+import 'package:easyfrca/screens/osceandsoe.dart';
+import 'package:easyfrca/screens/primarysba.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+
+import '../res.dart';
+
+class ChooseTopics extends StatefulWidget {
+  final exam;
+
+  ChooseTopics(this.exam);
+
+  @override
+  _ChooseTopicsState createState() => _ChooseTopicsState();
+}
+
+class _ChooseTopicsState extends State<ChooseTopics> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: CustomTheme.primaryCololight,
+        title: Text('Primary'),
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                Res.background,
+                fit: BoxFit.cover,
+                color: Colors.black.withOpacity(0.8),
+                colorBlendMode: BlendMode.darken,
+              ),
+            ),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 150,
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    height: 1,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      if (widget.exam == 'sba') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PrimarySBA('All')));
+                      }
+                      if (widget.exam == 'osce') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OsceAndSoe('osce', "All")));
+                      }
+                      if (widget.exam == 'soe') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OsceAndSoe("soe", "All")));
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('All'),
+                            Text(
+                              'Subtitle',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    height: 1,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.exam == 'sba') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PrimarySBA('Physiology & Anatomy')));
+                      }
+                      if (widget.exam == 'osce') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OsceAndSoe(
+                                    'osce', 'Physiology & Anatomy')));
+                      }
+                      if (widget.exam == 'soe') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OsceAndSoe("soe", 'Physiology & Anatomy')));
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Physiology & Anatomy'),
+                            Text(
+                              'Subtitle',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    height: 1,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.exam == 'sba') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PrimarySBA('Pharmacology & Statistics')));
+                      }
+                      if (widget.exam == 'osce') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OsceAndSoe(
+                                    'osce', 'Pharmacology & Statistics')));
+                      }
+                      if (widget.exam == 'soe') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OsceAndSoe(
+                                    'soe', 'Pharmacology & Statistics')));
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Pharmacology & Statistics'),
+                            Text(
+                              'Subtitle',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    height: 1,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.exam == 'sba') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PrimarySBA('Physics & Equipment')));
+                      }
+                      if (widget.exam == 'osce') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OsceAndSoe('osce', 'Physics & Equipment')));
+                      }
+                      if (widget.exam == 'soe') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OsceAndSoe('soe', 'Physics & Equipment')));
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Physics & Equipment'),
+                            Text(
+                              'Subtitle',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    height: 1,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

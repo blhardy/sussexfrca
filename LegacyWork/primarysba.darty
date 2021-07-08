@@ -1,0 +1,453 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easyfrca/screens/sbaexplain.dart';
+import 'package:easyfrca/screens/sbaquestiondetail.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// TODO: Ensure question order is randomised
+// TODO: Ensure answer order is randomised
+// TODO: Ensure that after randomisation the correct answer is given in the description
+// TODO:
+//
+
+class PrimarySBA extends StatefulWidget {
+  final topics;
+
+  PrimarySBA(this.topics);
+
+  @override
+  _PrimarySBAState createState() => _PrimarySBAState();
+}
+
+class _PrimarySBAState extends State<PrimarySBA> {
+  SwiperController _controller = SwiperController();
+  int _i = 0;
+  List<dynamic> _questions = [];
+  String selected = '';
+  List<dynamic> myAnswers = [];
+  var colorOne = Colors.white;
+  var colortwo = Colors.white;
+  var colorthree = Colors.white;
+  var colorfour = Colors.white;
+  var colorfive = Colors.white;
+
+  StreamSubscription _subscription;
+  bool isLoading = true;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _subscription.cancel();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getQuestionSba();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Container(
+                      height: MediaQuery.of(context).size.height - 25,
+                      width: MediaQuery.of(context).size.width,
+                      child: Swiper(
+                        controller: _controller,
+                        physics: NeverScrollableScrollPhysics(),
+                        loop: false,
+                        itemCount: _questions.length + 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return questionList(context, index);
+                        },
+                      ),
+                    )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget questionList(BuildContext context, int index) {
+    var qNo = index + 1;
+    return Container(
+      child: index == _questions.length
+          ? Container(
+              child: Center(
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SbaExplain(myAnswers, widget.topics)));
+                      },
+                      child: Text('Result Progress'))),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: IconButton(
+                        onPressed: () {
+                          index++;
+                        },
+                        icon: Icon(Icons.arrow_back_ios),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: Center(
+                          child: Text(
+                        index == 0 || index == 1 ? "" : "${qNo - 2}",
+                        style: TextStyle(fontSize: 18),
+                      )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: Center(
+                          child: Text(
+                        index == 0 ? "" : "${qNo - 1}",
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: Center(
+                          child: Text(
+                        qNo.toString(),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: Center(
+                          child: Text(
+                        qNo == _questions.length ? "" : "${qNo + 1}",
+                        style: TextStyle(fontSize: 18),
+                      )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: Center(
+                          child: Text(
+                        qNo == _questions.length || qNo + 1 == _questions.length
+                            ? ""
+                            : "${qNo + 2}",
+                        style: TextStyle(fontSize: 18),
+                      )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 7,
+                      height: 60,
+                      decoration: BoxDecoration(color: Colors.grey),
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.arrow_forward_ios),
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.black)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _questions[index]['question'],
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.normal),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    selected = _questions[index]['option1'].toString();
+                    colorOne = Colors.grey;
+                    colortwo = Colors.white;
+                    colorthree = Colors.white;
+                    colorfour = Colors.white;
+                    colorfive = Colors.white;
+
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: colorOne,
+                        border: Border.all(color: Colors.black12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('A) ${_questions[index]['option1']}'),
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black12,
+                  height: 1,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    selected = _questions[index]['option2'].toString();
+
+                    colorOne = Colors.white;
+                    colortwo = Colors.grey;
+                    colorthree = Colors.white;
+                    colorfour = Colors.white;
+                    colorfive = Colors.white;
+
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: colortwo,
+                        border: Border.all(color: Colors.black12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('B) ${_questions[index]['option2']}'),
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black12,
+                  height: 1,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    selected = _questions[index]['option3'].toString();
+
+                    colorOne = Colors.white;
+                    colortwo = Colors.white;
+                    colorthree = Colors.grey;
+                    colorfour = Colors.white;
+                    colorfive = Colors.white;
+
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: colorthree,
+                        border: Border.all(color: Colors.black12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('C) ${_questions[index]['option3']}'),
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black12,
+                  height: 1,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    selected = _questions[index]['option4'].toString();
+
+                    colorOne = Colors.white;
+                    colortwo = Colors.white;
+                    colorthree = Colors.white;
+                    colorfour = Colors.grey;
+                    colorfive = Colors.white;
+
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: colorfour,
+                        border: Border.all(color: Colors.black12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('D) ${_questions[index]['option4']}'),
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black12,
+                  height: 1,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    selected = _questions[index]['option5'].toString();
+
+                    colorOne = Colors.white;
+                    colortwo = Colors.white;
+                    colorthree = Colors.white;
+                    colorfour = Colors.white;
+                    colorfive = Colors.grey;
+
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: colorfive,
+                        border: Border.all(color: Colors.black12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('E) ${_questions[index]['option5']}'),
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.black12,
+                  height: 1,
+                ),
+                index == _questions.length
+                    ? Container()
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RaisedButton(
+                            color: CustomTheme.primaryColor,
+                            onPressed: () async {
+                              print('selected $selected');
+                              colorOne = Colors.white;
+                              colortwo = Colors.white;
+                              colorthree = Colors.white;
+                              colorfour = Colors.white;
+                              colorfive = Colors.white;
+                              myAnswers.add({'selected': selected});
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SbaQuestionDetail(
+                                          myAnswer: myAnswers[index],
+                                          question: _questions[index])));
+                              await _controller
+                                  .move(_i++ % _questions.length + 1);
+                              setState(() {});
+                              var s = jsonEncode(myAnswers);
+
+                              SharedPreferences getDemoResult =
+                                  await SharedPreferences.getInstance();
+                              await getDemoResult.setString("sbarecord", s);
+
+//                              if(_questions[index]['image']!=""){
+//                                Navigator.push(
+//                                    context,
+//                                    new MaterialPageRoute(
+//                                        builder: (context) => FullScreenImage(
+//                                          photoUrl: _questions[index]['image'],
+//                                        )));
+//                              }
+                            },
+                            child: Text('Submit'),
+                          ),
+                        ),
+                      )
+              ],
+            ),
+    );
+  }
+
+  void getQuestionSba() async {
+    if (widget.topics == 'All') {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+    if (widget.topics.contains("Pharmacology & Statistics")) {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .where('subject', isEqualTo: "Pharmacology & Statistics")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+    if (widget.topics.contains("Physiology & Anatomy")) {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .where('subject', isEqualTo: "Physiology & Anatomy")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+    if (widget.topics.contains("Physics & Equipment")) {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .where('subject', isEqualTo: "Physics & Equipment")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+  }
+}

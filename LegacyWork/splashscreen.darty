@@ -1,0 +1,75 @@
+import 'dart:async';
+
+import 'package:easyfrca/res.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:easyfrca/utils/bottomnav.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Timer(
+        Duration(seconds: 3),
+        () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => Bottom_Nav_Page())));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: CustomTheme.primaryColor,
+        title: Text(
+          'easyFRCA',
+          style: TextStyle(
+              color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                Res.background,
+                fit: BoxFit.cover,
+                color: Colors.black.withOpacity(0.8),
+                colorBlendMode: BlendMode.darken,
+              ),
+            ),
+            Positioned(
+              top: 280,
+              left: 50,
+              bottom: 280,
+              right: 50,
+              child: Container(
+                width: 250,
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Center(
+                  child: Text(
+                    'Make Revision Easy',
+                    style: GoogleFonts.comicNeue(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

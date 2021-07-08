@@ -1,0 +1,175 @@
+import 'package:easyfrca/res.dart';
+import 'package:easyfrca/screens/choosetopic.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'primarysba.dart';
+
+var newQuestionsOnly = true;
+var includePhysiology = true;
+var includePhysics = true;
+var includePharmacology = true;
+var selectedSubjects = [
+  "Physics & Equipment",
+  "Physiology & Anatomy",
+  "Pharmacology & Statistics"
+];
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        key: _scaffoldKey,
+        body: SafeArea(
+            child: Stack(alignment: AlignmentDirectional.center, children: [
+          Container(
+            margin: EdgeInsets.only(left: 30, top: 100, right: 30, bottom: 50),
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blueGrey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            alignment: AlignmentDirectional.bottomCenter,
+            child: Column(children: [
+              Container(
+                width: 250,
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Center(
+                  child: Text(
+                    'Primary SBA Revision',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold, fontSize: 22),
+                  ),
+                ),
+              ),
+              Container(
+                  child:
+                      MyStatefulWidget(descriptorLabel: "New Questions Only")),
+              Container(
+                  child: MyStatefulWidget(
+                      descriptorLabel: "Physiology & Anatomy")),
+              Container(
+                  child:
+                      MyStatefulWidget(descriptorLabel: "Physics & Equipment")),
+              Container(
+                  child: MyStatefulWidget(
+                      descriptorLabel: "Pharmacology & Statistics")),
+              ElevatedButton(
+                child: Text('Start Quiz'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.teal,
+                  onPrimary: Colors.white,
+                  onSurface: Colors.grey,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PrimarySBA(selectedSubjects)),
+                  );
+                },
+              ),
+            ]),
+          ),
+        ])));
+  }
+}
+
+class LabeledCheckbox extends StatelessWidget {
+  const LabeledCheckbox({
+    Key key,
+    this.label,
+    this.padding,
+    this.value,
+    this.onChanged,
+  }) : super(key: key);
+
+  final String label;
+  final EdgeInsets padding;
+  final bool value;
+  final Function onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onChanged(!value);
+      },
+      child: Padding(
+        padding: padding,
+        child: Row(
+          children: <Widget>[
+            Expanded(child: Text(label)),
+            Checkbox(
+              value: value,
+              onChanged: (bool newValue) {
+                onChanged(newValue);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// This is the stateful widget that the main application instantiates.
+class MyStatefulWidget extends StatefulWidget {
+  final String descriptorLabel;
+  const MyStatefulWidget({Key key, this.descriptorLabel}) : super(key: key);
+
+  @override
+  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+}
+
+/// This is the private State class that goes with MyStatefulWidget.
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  @override
+  bool _isSelected = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return LabeledCheckbox(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        value: _isSelected,
+        label: widget.descriptorLabel,
+        onChanged: (bool newValue) {
+          setState(() {
+            _isSelected = newValue;
+            if (newValue) {
+              if (selectedSubjects.contains(widget.descriptorLabel)) {
+                selectedSubjects.remove("New Questions Only");
+              } else {
+                selectedSubjects.add(widget.descriptorLabel);
+              }
+            } else {
+              selectedSubjects.remove(widget.descriptorLabel);
+            }
+            selectedSubjects.remove("New Questions Only");
+          });
+        });
+  }
+}

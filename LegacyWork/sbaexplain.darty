@@ -1,0 +1,193 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easyfrca/screens/sbaquestiondetail.dart';
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+
+class SbaExplain extends StatefulWidget {
+  final List<dynamic> myAswers;
+  final topic;
+
+  SbaExplain(this.myAswers, this.topic);
+
+  @override
+  _SbaExplainState createState() => _SbaExplainState();
+}
+
+class _SbaExplainState extends State<SbaExplain> {
+  List<dynamic> _questions = [];
+  String selected = '';
+  List<dynamic> myAswers = [];
+  StreamSubscription _subscription;
+  bool isLoading = true;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _subscription.cancel();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getQuestionSba();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: CustomTheme.primaryColor,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(Icons.close)),
+        title: Center(child: Text('Questions')),
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              color: Colors.white,
+              child: new ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return buildList(context, index);
+                  },
+                  itemCount: _questions.length
+                  //pagination: new SwiperPagination(),
+                  //control: new SwiperControl(),
+                  ),
+            ),
+    );
+  }
+
+  Widget buildList(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SbaQuestionDetail(
+                    myAnswer: widget.myAswers[index],
+                    question: _questions[index])));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          height: 120,
+          child: Material(
+            color: Colors.white,
+            elevation: 2.0,
+            child: GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      height: 120,
+                      width: 12,
+                      color: widget.myAswers[index]['selected'] ==
+                              _questions[index]['correct']
+                          ? Colors.green
+                          : Colors.red,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SbaQuestionDetail(
+                                        myAnswer: widget.myAswers[index],
+                                        question: _questions[index])));
+                          },
+                          child: Text(
+                            '${_questions[index]['question']}',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void getQuestionSba() async {
+    if (widget.topic == 'All') {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+    if (widget.topic == "Pharmacology & Statistics") {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .where('subject', isEqualTo: "Pharmacology & Statistics")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+    if (widget.topic == "Physiology & Anatomy") {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .where('subject', isEqualTo: "Physiology & Anatomy")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+    if (widget.topic == "Physics & Equipment") {
+      _subscription = Firestore.instance
+          .collection("SBA")
+          .where('subject', isEqualTo: "Physics & Equipment")
+          .snapshots()
+          .listen((QuerySnapshot snaps) {
+        _questions.clear();
+        snaps.documents.forEach((element) {
+          _questions.add(element.data);
+          setState(() {
+            isLoading = false;
+          });
+        });
+      });
+    }
+  }
+}

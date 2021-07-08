@@ -1,0 +1,297 @@
+import 'package:easyfrca/theme/apptheme.dart';
+import 'package:flutter/material.dart';
+
+class SbaQuestionDetail extends StatefulWidget {
+  final Map myAnswer;
+  final Map question;
+  SbaQuestionDetail({this.myAnswer, this.question});
+  @override
+  _SbaQuestionDetailState createState() => _SbaQuestionDetailState();
+}
+
+class _SbaQuestionDetailState extends State<SbaQuestionDetail> {
+  var colorOne = Colors.white;
+  var colortwo = CustomTheme.primaryColor;
+  var colorthree = CustomTheme.primaryColor;
+  var colorfour = CustomTheme.primaryColor;
+  var colorfive = CustomTheme.primaryColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('>>>> ${widget.question['image']}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: CustomTheme.primaryColor,
+        title: Text('Question Explaination'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text('${widget.question['question']}'),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 90,
+                child: Material(
+                  elevation: 1.5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 90,
+                          color: widget.question['option1'] ==
+                                  widget.question['correct']
+                              ? Colors.green
+                              : widget.question['option1'] ==
+                                          widget.question['correct'] &&
+                                      widget.question['option1'] ==
+                                          widget.myAnswer['selected']
+                                  ? Colors.green
+                                  : widget.question['option1'] !=
+                                              widget.question['correct'] &&
+                                          widget.question['option1'] ==
+                                              widget.myAnswer['selected']
+                                      ? Colors.red
+                                      : Colors.grey,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${widget.question['option1']}',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 90,
+                child: Material(
+                  elevation: 1.5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 90,
+                          color: widget.question['option2'] ==
+                                  widget.question['correct']
+                              ? Colors.green
+                              : widget.question['option2'] ==
+                                          widget.question['correct'] &&
+                                      widget.question['option2'] ==
+                                          widget.myAnswer['selected']
+                                  ? Colors.green
+                                  : widget.question['option2'] !=
+                                              widget.question['correct'] &&
+                                          widget.question['option2'] ==
+                                              widget.myAnswer['selected']
+                                      ? Colors.red
+                                      : Colors.grey,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${widget.question['option2']}',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 90,
+                child: Material(
+                  elevation: 1.5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 90,
+                          color: widget.question['option3'] ==
+                                  widget.question['correct']
+                              ? Colors.green
+                              : widget.question['option3'] ==
+                                          widget.question['correct'] &&
+                                      widget.question['option3'] ==
+                                          widget.myAnswer['selected']
+                                  ? Colors.green
+                                  : widget.question['option3'] !=
+                                              widget.question['correct'] &&
+                                          widget.question['option3'] ==
+                                              widget.myAnswer['selected']
+                                      ? Colors.red
+                                      : Colors.grey,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${widget.question['option3']}',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 90,
+                child: Material(
+                  elevation: 1.5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 90,
+                          color: widget.question['option4'] ==
+                                  widget.question['correct']
+                              ? Colors.green
+                              : widget.question['option4'] ==
+                                          widget.question['correct'] &&
+                                      widget.question['option4'] ==
+                                          widget.myAnswer['selected']
+                                  ? Colors.green
+                                  : widget.question['option4'] !=
+                                              widget.question['correct'] &&
+                                          widget.question['option4'] ==
+                                              widget.myAnswer['selected']
+                                      ? Colors.red
+                                      : Colors.grey,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${widget.question['option4']}',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 90,
+                child: Material(
+                  elevation: 1.5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          height: 90,
+                          color: widget.question['option5'] ==
+                                  widget.question['correct']
+                              ? Colors.green
+                              : widget.question['option5'] ==
+                                          widget.question['correct'] &&
+                                      widget.question['option5'] ==
+                                          widget.myAnswer['selected']
+                                  ? Colors.green
+                                  : widget.question['option5'] !=
+                                              widget.question['correct'] &&
+                                          widget.question['option5'] ==
+                                              widget.myAnswer['selected']
+                                      ? Colors.red
+                                      : Colors.grey,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${widget.question['option4']}',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Container(
+                width: 300,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(15)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    '${widget.question['explain']}',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ),
+            ),
+            widget.question['image'] != ""
+                ? Image.network(widget.question['image'])
+                : Container()
+          ],
+        ),
+      ),
+    );
+  }
+}
