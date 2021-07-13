@@ -1,16 +1,12 @@
-// import 'dart:io';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:csv/csv.dart';
+import 'dart:async';
 import 'package:easyfrca/components/questionCard.dart';
-import 'package:easyfrca/userData.dart';
-// import 'package:easyfrca/userData.dart';
-// import 'package:easyfrca/question_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:get/get.dart';
 import './question_bank.dart';
 import 'components/option.dart';
 import 'constants.dart';
+
+//TODO make sure that something happens at the end of the question list, no more questions screen
 
 class QuestionsScreen extends StatefulWidget {
   @override
@@ -19,7 +15,7 @@ class QuestionsScreen extends StatefulWidget {
 
 class QuestionsScreenState extends State<QuestionsScreen> {
   var questionTitle;
-  List<Question> questionList = [];
+  var questionList;
   var queOC;
   var options;
   var selectedOption;
@@ -27,19 +23,34 @@ class QuestionsScreenState extends State<QuestionsScreen> {
   var revealExplanation;
   var selectedQuestionTopics;
   var answeredCorrectly;
-  var storage = AnswerStorage();
   var answerStrings;
   var currentQuestionIndex;
+  var selectedQuestionList = [];
+  String nextQuestionText = 'Next Question';
 
   @override
   void initState() {
     super.initState();
     _getCurrentQuestionIndex();
-    getQuestions();
     _loadAnswerMap();
   }
 
+  updateSelectedQuestionCount() {
+    for (Question question in questionList) {
+      if (selectedQuestionTopics
+          .contains(questionList[currentQuestionIndex].subject)) {}
+    }
+  }
+
   nextQuestion(queOC) {
+    if (currentQuestionIndex + 1 == questionList.length) {
+      print('Almost end of the quiz');
+      nextQuestionText = 'End Quiz';
+    } else if (currentQuestionIndex == questionList.length) {
+      print('End of the quiz');
+      nextQuestionText = 'End Quiz';
+      Navigator.pushNamed(context, '/questionsList');
+    }
     setState(() {
       answerSubmitted = false;
       selectedOption = '';
@@ -55,8 +66,8 @@ class QuestionsScreenState extends State<QuestionsScreen> {
   void _setAnswerSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     _loadAnswerMap();
-    answerStrings = ['1,true', '2, true', '3,true', '5,true'];
-    answerStrings.add('$currentQuestionIndex, $answeredCorrectly');
+    var indexPlusOne = currentQuestionIndex + 1;
+    answerStrings.add('$indexPlusOne, $answeredCorrectly');
     prefs.setStringList('answerStrings', answerStrings);
   }
 
@@ -90,35 +101,27 @@ class QuestionsScreenState extends State<QuestionsScreen> {
   void getQuestions() async {
     var questList = await questionBank.getQuestionsAsync();
     questList.removeAt(0);
-    List toBeRemoved = [];
-    questionList.forEach((element) {
-      if (!selectedQuestionTopics.contains(element.subject)) {
-        questionList.remove(element);
+    for (Question question in questList) {
+      if (selectedQuestionTopics
+          .contains(questList[currentQuestionIndex].subject)) {
+        selectedQuestionList.add(question);
       }
-    });
+    }
     setState(() {
-      questionList = (questList);
+      questionList = (selectedQuestionList);
       queOC = questionList[currentQuestionIndex];
     });
   }
 
-  List getQuestionIndexList() {
-    List questionIndexList = [];
-    var newList = questionList.asMap().entries.map((entry) {
-      int idx = entry.key;
-      Question val = entry.value;
-      questionIndexList.add(idx);
-    });
-    return questionIndexList;
-  }
-
   void getNextQuestionIndex() async {
     currentQuestionIndex += 1;
+    while (!selectedQuestionTopics
+        .contains(selectedQuestionList[currentQuestionIndex].subject)) {
+      currentQuestionIndex += 1;
+    }
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('currentQuestionIndex', currentQuestionIndex);
-    setState(() {
-      currentQuestionIndex;
-    });
+    setState(() {});
   }
 
   var questionBank = new QuestionBank();
@@ -145,13 +148,11 @@ class QuestionsScreenState extends State<QuestionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // QuestionController _controller = Get.put(QuestionController());
-    // final AnswerStorage storage;
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     questionTitle = routeArgs['title'];
     selectedQuestionTopics = routeArgs['selectedQuestionTopics'];
-    var indexOfQuestion = routeArgs['index'];
+    getQuestions();
 
     return Scaffold(
       appBar: AppBar(title: Text('SBA Revision')),
@@ -179,7 +180,7 @@ class QuestionsScreenState extends State<QuestionsScreen> {
                       style: ElevatedButton.styleFrom(
                           primary: Colors.purple[400]!),
                       onPressed: () => nextQuestion(queOC),
-                      child: Text('Next Question',
+                      child: Text(nextQuestionText,
                           style: TextStyle(color: Colors.white))),
                 ]))
           ],

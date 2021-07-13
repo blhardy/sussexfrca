@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:easyfrca/question_bank.dart';
-import 'package:easyfrca/userData.dart';
 // import 'package:easyfrca/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,7 +43,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var storage = AnswerStorage();
   var userStorageData;
   var rowsAsListOfValues;
   final File primarySBAFile = new File('/assets/PrimarySBA.csv');

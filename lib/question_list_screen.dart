@@ -1,10 +1,11 @@
 import 'package:csv/csv.dart';
-import 'package:easyfrca/userData.dart';
-import 'package:easyfrca/userData.dart';
+import 'package:easyfrca/user_answer_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './question_bank.dart';
+
+//TODO filter questions by topics
 
 class QuestionsListScreen extends StatefulWidget {
   @override
@@ -15,21 +16,47 @@ class QuestionsListScreenState extends State<QuestionsListScreen> {
   var _data;
   var questionList;
   var selectedQuestionTopics;
-  var storage = AnswerStorage();
   var questionBank = new QuestionBank();
+  var userAnswerController = UserAnswerController();
+  var answerStrings;
+  var interim;
+
+  void fetchAnsweredQuestions() async {
+    SharedPreferences.getInstance().then((prefs) {
+      answerStrings = (prefs.getStringList('answerStrings'));
+      setState(() {});
+    });
+  }
+
+  Future<List<Question>> getQuestions() =>
+      questionBank.getQuestionsAsync().then((_data) {
+        _data.removeAt(0);
+        questionList = _data;
+        fetchAnsweredQuestions();
+        return _data;
+      });
 
   Color getColour(var index) {
     var color = Colors.white;
+    try {
+      for (String answer in answerStrings) {
+        if (answer.startsWith((index + 1).toString())) {
+          if (answer.endsWith('ue')) {
+            color = Colors.green[100]!;
+          } else {
+            color = Colors.red[100]!;
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
     return color;
-  }
-
-  dynamic loadQuestions() async {
-    _data = await questionBank.loadAsset();
-    return _data;
   }
 
   void _setSelectedQuestion(var index, selectedQuestionTopics) async {
     final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('currentQuestionIndex', index);
 
     // prefs.setInt('currentQuestionIndex', int.parse(index));
     Navigator.pushNamed(context, '/questions', arguments: {
@@ -39,67 +66,41 @@ class QuestionsListScreenState extends State<QuestionsListScreen> {
     });
   }
 
-  // bool getWhetherQuestionShouldBeDisplayed(int index) {
-  //   // getQuestions();
-  //   return (selectedQuestionTopics.contains(questionList[index].subject));
-  // }
-
-  List<Question> getQuestionsFromStringList(var data) {
-    var questionsList = data.map<Question>((questionParts) {
-      return Question(
-        questionParts[0],
-        questionParts[1],
-        questionParts[2],
-        questionParts[3],
-        questionParts[4].toString(),
-        questionParts[5].toString(),
-        questionParts[6].toString(),
-        questionParts[7].toString(),
-        questionParts[8].toString(),
-        questionParts[9].toString(),
-        questionParts[10].toString(),
-        questionParts[11].toString(),
-        questionParts[12].toString(),
-        questionParts[13].toString(),
-        questionParts[14].toString(),
-      );
-    }).toList();
-    return questionsList;
+  bool isThisQuestionInSelectedTopics(int index) {
+    return (selectedQuestionTopics.contains(questionList[index].subject));
   }
 
   @override
-  Widget build(BuildContext context) {
-    var interim;
-    loadQuestions().then((data) => {
-          data.removeAt(0),
-          interim = getQuestionsFromStringList(data),
-          setState(() {
-            questionList = interim;
-          })
-        });
-
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    selectedQuestionTopics = routeArgs['selectedQuestionTopics'];
-
-    return Scaffold(
-        appBar: AppBar(title: Text('Questions')),
-        body: ListView.builder(
-            itemCount: 151,
-            itemBuilder: (context, index) {
-              return Visibility(
-                visible: (selectedQuestionTopics
-                    .contains(questionList[index].subject)),
-                child: Card(
-                    color: getColour(index),
-                    child: ListTile(
-                        onTap: () =>
-                            _setSelectedQuestion(index, selectedQuestionTopics),
-                        title: Text(questionList[index].title),
-                        subtitle: Text(questionList[index].subject))),
-              );
-            }));
-  }
+  Widget build(BuildContext context) => FutureBuilder(
+        future: getQuestions(),
+        builder: (context, snapshot) {
+          final widgetQuestionList = questionList;
+          final routeArgs = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          selectedQuestionTopics = routeArgs['selectedQuestionTopics'];
+          if (snapshot.hasData) {
+            return Scaffold(
+                appBar: AppBar(title: Text('Questions')),
+                body: ListView.builder(
+                    itemCount: 150,
+                    itemBuilder: (context, index) {
+                      return Visibility(
+                          visible: (isThisQuestionInSelectedTopics(index)),
+                          child: Card(
+                              color: getColour(index),
+                              child: ListTile(
+                                  onTap: () => _setSelectedQuestion(
+                                      index, selectedQuestionTopics),
+                                  title: Text(widgetQuestionList[index].title),
+                                  subtitle: Text(
+                                      widgetQuestionList[index].subject))));
+                    }));
+          } else {
+            // We can show the loading view until the data comes back.
+            return CircularProgressIndicator();
+          }
+        },
+      );
 }
 
 // Future<void> getOneQuestionForScreen() async {

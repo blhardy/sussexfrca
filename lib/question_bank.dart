@@ -15,8 +15,10 @@ class QuestionBank {
   }
 
   Future<List<dynamic>> loadAsset() async {
-    final _rawData = await rootBundle.loadString("assets/PrimarySBA.csv");
-    List<List<dynamic>> _listData = CsvToListConverter().convert(_rawData);
+    List<List<dynamic>> _listData = [];
+    rootBundle.loadString("assets/PrimarySBA.csv").then((_rawData) {
+      _listData = CsvToListConverter().convert(_rawData);
+    });
     return _listData;
   }
 
