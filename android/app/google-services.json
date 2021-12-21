@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "906162440207",
+    "project_id": "finalfrca-93250",
+    "storage_bucket": "finalfrca-93250.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906162440207:android:fa372b3be162ac2e067b7a",
+        "android_client_info": {
+          "package_name": "com.easyfrca.sussexfrca"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906162440207-099p6pv96bl618sr815qqh8e0q31agb2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjLPY9cbJNHMv_WSkiWiXVznjbEQsmhwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906162440207-099p6pv96bl618sr815qqh8e0q31agb2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
